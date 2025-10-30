@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block title %}Upworld Devs - Custom Websites & Software Solutions{% endblock %}
+
+{% block content %}
+
+    <section class="container mx-auto max-w-7xl px-6 py-24 text-center hero-section-container">
+        <div id="hero-content" class="opacity-0 transition duration-1000 transform translate-y-8" style="animation: fadeInUp 1s ease-out forwards; animation-delay: 0.5s;">
+            
+            <p class="text-xl font-medium text-blue-400 mb-2 parallax-item" data-depth="5">YOUR DIGITAL TRANSFORMATION STARTS HERE</p>
+            <h1 class="text-5xl md:text-7xl font-extrabold leading-tight tracking-tighter text-white parallax-item" data-depth="20">
+                Building Tomorrow's <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-indigo-500">Digital World</span>
+            </h1>
+            
+            <p class="mt-6 text-xl text-gray-400 max-w-3xl mx-auto parallax-item" data-depth="10">
+                We are Upworld Devs: crafting high-performance custom websites, robust software, and scalable computer solutions that drive real business growth.
+            </p>
+
+            <div class="mt-10 flex justify-center space-x-4">
+                <a href="/order" class="cta-pulse bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 px-8 rounded-full shadow-lg transition duration-300 transform hover:scale-105">
+                    Start Your Project
+                </a>
+                <a href="/services" class="bg-gray-800 hover:bg-gray-700 text-gray-300 font-semibold py-3 px-8 rounded-full border border-gray-700 transition duration-300 transform hover:scale-105">
+                    View Our Services
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="container mx-auto max-w-7xl px-6 py-20">
+        <div class="text-center mb-16 animate-in">
+            <h2 class="text-4xl font-bold text-white mb-3 feature-title">Our Core Solutions</h2>
+            <p class="text-lg text-gray-400 max-w-2xl mx-auto feature-subtitle">
+                Comprehensive development to cover your entire digital landscape.
+            </p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="card-hover p-8 bg-gray-800/50 border border-blue-500/30 rounded-2xl shadow-2xl feature-item animate-in" style="--delay: 0s;">
+                <div class="p-3 inline-block rounded-full bg-blue-500/20 text-blue-400 mb-4">
+                    <svg class="w-8 h-8" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3">Custom Websites & Apps</h3>
+                <p class="text-gray-400">
+                    From e-commerce platforms to dynamic corporate sites, we build blazing-fast, responsive, and SEO-friendly web experiences.
+                </p>
+                <a href="/services" class="mt-4 inline-block text-blue-400 hover:text-blue-300 transition text-sm font-semibold">Learn More →</a>
+            </div>
+
+            <div class="card-hover p-8 bg-gray-800/50 border border-blue-500/30 rounded-2xl shadow-2xl feature-item animate-in" style="--delay: 0.2s;">
+                <div class="p-3 inline-block rounded-full bg-blue-500/20 text-blue-400 mb-4">
+                    <svg class="w-8 h-8" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3">System & IT Solutions</h3>
+                <p class="text-gray-400">
+                    Infrastructure planning, cloud migration, security audits, and dedicated IT consultancy to keep your business running smoothly.
+                </p>
+                <a href="/services" class="mt-4 inline-block text-blue-400 hover:text-blue-300 transition text-sm font-semibold">Learn More →</a>
+            </div>
+
+            <div class="card-hover p-8 bg-gray-800/50 border border-blue-500/30 rounded-2xl shadow-2xl feature-item animate-in" style="--delay: 0.4s;">
+                <div class="p-3 inline-block rounded-full bg-blue-500/20 text-blue-400 mb-4">
+                    <svg class="w-8 h-8" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5L12 2zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-3">Bespoke Software Development</h3>
+                <p class="text-gray-400">
+                    Custom CRM systems, internal tools, and specialized desktop/mobile applications tailored precisely to your unique workflow.
+                </p>
+                <a href="/services" class="mt-4 inline-block text-blue-400 hover:text-blue-300 transition text-sm font-semibold">Learn More →</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="marquee-section" class="py-8 border-y border-gray-700/50 my-20 overflow-hidden bg-gray-900/70">
+        <div class="marquee-content text-2xl font-bold text-gray-400 uppercase tracking-widest">
+            <span class="marquee-item text-blue-400 flex items-center">
+                <svg class="w-6 h-6 mr-2 inline-block" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                React/Next.js Development
+            </span>
+            <span class="marquee-item flex items-center">
+                &#x2022; Cloud Migration (AWS/Azure)
+            </span>
+            <span class="marquee-item text-indigo-400 flex items-center">
+                &#x2022; Custom Python/Django Software
+            </span>
+            <span class="marquee-item flex items-center">
+                &#x2022; UI/UX & Motion Design
+            </span>
+            <span class="marquee-item text-blue-400 flex items-center">
+                <svg class="w-6 h-6 mr-2 inline-block" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                React/Next.js Development
+            </span>
+            <span class="marquee-item flex items-center">
+                &#x2022; Cloud Migration (AWS/Azure)
+            </span>
+            <span class="marquee-item text-indigo-400 flex items-center">
+                &#x2022; Custom Python/Django Software
+            </span>
+            <span class="marquee-item flex items-center">
+                &#x2022; UI/UX & Motion Design
+            </span>
+        </div>
+    </section>
+
+    <section class="container mx-auto max-w-4xl px-6 py-20 text-center">
+        <h2 class="text-4xl font-extrabold text-white animate-in">Stop Waiting, Start Building.</h2>
+        <p class="mt-4 text-lg text-gray-400 max-w-2xl mx-auto animate-in" style="--delay: 0.2s;">
+            Ready to partner with a team that delivers functional code and stunning visuals? Let's discuss your project scope.
+        </p>
+        <a href="/order" class="cta-pulse mt-8 inline-block bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 px-12 rounded-full shadow-xl transition duration-300 transform hover:scale-105 animate-in" style="--delay: 0.4s;">
+            Submit Project Brief Today
+        </a>
+    </section>
+
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script>
+        // NOTE: The Intersection Observer and Parallax logic is in base.html.
+        // If you had a Testimonial Carousel, its specific JS would go here.
+        // For now, we only need the base scripts.
+    </script>
+{% endblock %}

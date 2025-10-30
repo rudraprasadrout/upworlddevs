@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+
+{% block title %}{{ g.T['about'] }}{% endblock %}
+
+{% block content %}
+<style>
+    /* Custom styles for card hover effect and modal */
+    .team-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        cursor: pointer;
+    }
+    .team-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(66, 153, 225, 0.2); /* Soft blue glow */
+    }
+
+    /* Modal styles */
+    .member-modal {
+        display: none; /* Hidden by default */
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.85);
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-content {
+        background-color: #2D3748; /* Dark theme background */
+        color: #E2E8F0;
+        margin: 15% auto; 
+        padding: 30px;
+        border: 1px solid #4A5568;
+        width: 90%; 
+        max-width: 600px;
+        border-radius: 1rem;
+        position: relative;
+        animation-name: animatetop;
+        animation-duration: 0.4s;
+    }
+    
+    .modal-close {
+        color: #9CA3AF;
+        float: right;
+        font-size: 36px;
+        font-weight: bold;
+    }
+
+    .modal-close:hover,
+    .modal-close:focus {
+        color: #fff;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    @keyframes animatetop {
+        from {top: -300px; opacity: 0} 
+        to {top: 0; opacity: 1}
+    }
+</style>
+
+<section class="container mx-auto max-w-7xl px-6 py-24">
+    <div class="text-center mb-16 animate-in">
+        <h1 class="text-5xl font-extrabold text-white mb-3">Built on Excellence</h1>
+        <p class="text-xl text-blue-400 max-w-3xl mx-auto">More than just coders—we are your partners in digital innovation.</p>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-12 items-start">
+        
+        <!-- Core Philosophy & Team Overview -->
+        <div class="space-y-8">
+            <div class="bg-gray-800/70 p-6 rounded-xl border border-gray-700 shadow-lg">
+                <h2 class="text-3xl font-bold text-blue-400 mb-4">Our Core Philosophy</h2>
+                <p class="text-gray-300 text-lg leading-relaxed">
+                    Upworld Devs was founded on the belief that software should be an asset, not a burden. We prioritize clear communication, transparent pricing, and robust engineering to deliver products that perform under pressure. We don't just write code; we solve problems and build futures.
+                </p>
+            </div>
+
+            <div class="bg-gray-800/70 p-6 rounded-xl border border-gray-700 shadow-lg">
+                <h2 class="text-3xl font-bold text-white mb-4">The Team</h2>
+                <p class="text-gray-400">
+                    We are a small, dedicated team of senior developers and architects. Our compact size allows us to be agile, responsive, and deeply invested in the success of every client. When you work with us, you work directly with the experts who build your product.
+                </p>
+            </div>
+        </div>
+
+        <!-- Why Partner With Us (Benefits List) -->
+        <div class="space-y-6">
+            <h3 class="text-2xl font-bold text-white border-b border-gray-700 pb-2">Why Partner With Us?</h3>
+            
+            <ul class="space-y-4 text-gray-300">
+                <li class="flex items-start">
+                    <i class="fas fa-rocket text-blue-400 mr-3 mt-1"></i>
+                    <div>
+                        <strong class="text-white">Future-Proof Tech:</strong> We use the latest frameworks like Flask, Tailwind, and React to ensure speed and longevity.
+                    </div>
+                </li>
+                <li class="flex items-start">
+                    <i class="fas fa-shield-alt text-blue-400 mr-3 mt-1"></i>
+                    <div>
+                        <strong class="text-white">Security First:</strong> Every product is engineered with security protocols at the core, protecting your data and users.
+                    </div>
+                </li>
+                <li class="flex items-start">
+                    <i class="fas fa-handshake text-blue-400 mr-3 mt-1"></i>
+                    <div>
+                        <strong class="text-white">True Partnership:</strong> We offer continuous support and strategic consultation long after the launch.
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+    
+    <!-- --- NEW INTERACTIVE TEAM SECTION --- -->
+    <div class="mt-24 text-center">
+        <h2 class="text-4xl font-extrabold text-white mb-3">Meet Our Experts</h2>
+        <p class="text-lg text-gray-400 max-w-4xl mx-auto mb-12">Click on any team member to see their detailed profile, qualifications, and core skills.</p>
+        
+        <div id="team-grid" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Team Member Cards will be injected here by JavaScript -->
+        </div>
+    </div>
+</section>
+
+<!-- Modal Structure for Member Details -->
+<div id="memberModal" class="member-modal">
+    <div class="modal-content">
+        <span class="modal-close">&times;</span>
+        <div id="modal-body">
+            <!-- Content will be populated by JavaScript -->
+            <h3 id="modal-name" class="text-3xl font-bold mb-2 text-blue-400"></h3>
+            <p id="modal-position" class="text-lg font-semibold mb-4 text-white"></p>
+            <p id="modal-bio" class="text-gray-400 border-b border-gray-700 pb-4 mb-4"></p>
+            
+            <div class="space-y-4">
+                <div>
+                    <h4 class="text-xl font-bold text-white mb-2">Qualifications:</h4>
+                    <p id="modal-qualifications" class="text-gray-300 italic"></p>
+                </div>
+                
+                <div>
+                    <h4 class="text-xl font-bold text-white mb-2">Key Skills:</h4>
+                    <ul id="modal-skills" class="flex flex-wrap gap-2">
+                        <!-- Skills injected here -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Team Data Structure
+    const teamMembers = [
+        {
+            id: 1,
+            name: "Anya Sharma",
+            position: "Lead Software Architect",
+            qualifications: "M.S. Computer Science, Stanford University",
+            skills: ["Flask", "React", "System Design", "Cloud Infrastructure (AWS)", "Microservices"],
+            short_bio: "Anya spearheads our backend and cloud strategy, ensuring all systems are robust, scalable, and secure."
+        },
+        {
+            id: 2,
+            name: "Ben Carter",
+            position: "Principal Frontend Engineer",
+            qualifications: "B.Tech. Web Development, MIT",
+            skills: ["React/Next.js", "Tailwind CSS", "UI/UX Design", "Accessibility", "State Management"],
+            short_bio: "Ben transforms complex requirements into beautiful, intuitive, and highly responsive user interfaces."
+        },
+        {
+            id: 3,
+            name: "Chloe Lee",
+            position: "Data & ML Specialist",
+            qualifications: "Ph.D. Data Science, Imperial College London",
+            skills: ["Python (Pandas/NumPy)", "Machine Learning", "Data Visualization", "Database Optimization", "SQL"],
+            short_bio: "Chloe focuses on integrating intelligence into our applications, driving insights and automating processes."
+        }
+    ];
+
+    const teamGrid = document.getElementById('team-grid');
+    const modal = document.getElementById('memberModal');
+    const closeBtn = document.querySelector('.modal-close');
+
+    // Function to render team cards
+    function renderTeamCards() {
+        teamMembers.forEach(member => {
+            const card = document.createElement('div');
+            card.className = 'team-card bg-gray-800 p-6 rounded-xl border border-blue-600/50 shadow-xl text-center';
+            card.dataset.memberId = member.id;
+            
+            card.innerHTML = `
+                <!-- Placeholder Avatar/Icon -->
+                <i class="fas fa-user-circle text-6xl text-blue-400 mb-4"></i>
+                <h3 class="text-2xl font-bold text-white mb-1">${member.name}</h3>
+                <p class="text-blue-300 font-semibold mb-3">${member.position}</p>
+                <p class="text-gray-400 text-sm">${member.short_bio}</p>
+                <button class="mt-4 text-sm text-blue-400 hover:text-blue-300 font-medium">View Profile →</button>
+            `;
+            
+            card.onclick = () => openModal(member.id);
+            teamGrid.appendChild(card);
+        });
+    }
+
+    // Function to open and populate the modal
+    function openModal(id) {
+        const member = teamMembers.find(m => m.id === id);
+        if (!member) return;
+
+        document.getElementById('modal-name').textContent = member.name;
+        document.getElementById('modal-position').textContent = member.position;
+        document.getElementById('modal-bio').textContent = member.short_bio;
+        document.getElementById('modal-qualifications').textContent = member.qualifications;
+
+        const skillsList = document.getElementById('modal-skills');
+        skillsList.innerHTML = '';
+        member.skills.forEach(skill => {
+            const li = document.createElement('li');
+            li.className = 'bg-blue-600/30 text-blue-300 px-3 py-1 rounded-full text-sm font-medium';
+            li.textContent = skill;
+            skillsList.appendChild(li);
+        });
+
+        modal.style.display = 'flex';
+    }
+
+    // Function to close the modal
+    function closeModal() {
+        modal.style.display = 'none';
+    }
+
+    // Event listeners
+    closeBtn.onclick = closeModal;
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            closeModal();
+        }
+    }
+
+    // Render cards on load
+    document.addEventListener('DOMContentLoaded', renderTeamCards);
+</script>
+{% endblock %}

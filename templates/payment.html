@@ -1,0 +1,361 @@
+{% extends "base.html" %}
+
+{% block title %}Payment for Order #{{ order_id }}{% endblock %}
+
+{% block content %}
+<style>
+    /* Custom styling for payment details and QR container */
+    .payment-card {
+        background-color: #2D3748; /* Darker background */
+        border: 1px solid #4A5568;
+    }
+    .payment-instructions {
+        min-height: 350px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+    .qr-container {
+        max-width: 250px; /* Slightly smaller for a cleaner look */
+        margin: 0 auto;
+        padding: 1rem;
+        border-radius: 1rem;
+        background-color: #374151;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    /* Modal/Overlay for Enlarged QR (FIXED UI) */
+    .qr-modal {
+        display: none; /* Hidden by default */
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.9); /* Darker overlay */
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        transition: opacity 0.3s;
+    }
+    .qr-modal-content {
+        display: flex; 
+        flex-direction: column;
+        align-items: center;
+        background-color: white; /* CRITICAL: White background for scannability */
+        padding: 30px;
+        border-radius: 1rem;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        width: 90%;
+        max-width: 400px;
+        animation-name: zoom;
+        animation-duration: 0.3s;
+    }
+    .qr-modal-content img {
+        width: 100%;
+        height: auto;
+        max-width: 350px;
+    }
+    .qr-modal-close {
+        position: absolute;
+        top: 15px;
+        right: 35px;
+        color: #f1f1f1;
+        font-size: 40px;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+    .qr-modal-close:hover,
+    .qr-modal-close:focus {
+        color: #bbb;
+        text-decoration: none;
+        cursor: pointer;
+    }
+    @keyframes zoom {
+        from {transform: scale(0.1)} 
+        to {transform: scale(1)}
+    }
+</style>
+
+<section class="container mx-auto max-w-4xl px-6 py-16">
+    <div class="text-center mb-12">
+        <h1 class="text-4xl font-extrabold text-white mb-2">{{ g.T.payment_title }}</h1>
+        <p class="text-lg text-gray-400">{{ g.T.payment_subtitle }}</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Project Summary Card (Col 1 & 2) -->
+        <div class="lg:col-span-2 payment-card p-8 rounded-xl shadow-2xl space-y-6">
+            <h2 class="text-2xl font-bold text-blue-400 border-b border-gray-700 pb-3 mb-6">{{ g.T.summary_title }}</h2>
+
+            <div class="space-y-4 text-gray-300">
+                <p class="flex justify-between border-b border-gray-700 pb-2">
+                    <span class="font-semibold">{{ g.T.order_id }}</span>
+                    <span class="text-white font-mono">{{ order.order_id }}</span>
+                </p>
+                <p class="flex justify-between border-b border-gray-700 pb-2">
+                    <span class="font-semibold">{{ g.T.email_label }}</span>
+                    <span>{{ order.client_email }}</span>
+                </p>
+                <p class="flex justify-between border-b border-gray-700 pb-2">
+                    <span class="font-semibold">{{ g.T.client }}</span>
+                    <span>{{ order.project_type }}</span>
+                </p>
+                <p class="flex justify-between border-b border-gray-700 pb-2">
+                    <span class="font-semibold">Target Timeline:</span>
+                    <span>{{ order.timeline if order.timeline else 'N/A' }}</span>
+                </p>
+                
+                <!-- START: COMBINED QUOTE AND BUDGET DISPLAY -->
+                <div class="pt-4 border-t border-gray-600">
+                    <p class="text-3xl font-extrabold flex justify-between text-green-400">
+                        <span>Final Quote:</span>
+                        <!-- Displaying as ₹ Indian Rupee -->
+                        <span>₹{{ "{:,.2f}".format(order.quote) }}</span>
+                    </p>
+                    <!-- Display original budget as supporting text -->
+                    {% if order.budget %}
+                    <p class="text-sm text-gray-400 text-right mt-1 italic">
+                        (Client Estimated Budget: {{ order.budget }})
+                    </p>
+                    {% endif %}
+                </div>
+                <!-- END: COMBINED QUOTE AND BUDGET DISPLAY -->
+            </div>
+
+            <h3 class="text-xl font-bold text-gray-200 mt-8 pt-4 border-t border-gray-600">Project Description:</h3>
+            <p class="text-gray-400 bg-gray-900 p-4 rounded-lg text-sm whitespace-pre-wrap">{{ order.description }}</p>
+
+            <div class="mt-8 p-3 bg-red-800/20 border border-red-700 rounded-lg text-red-300">
+                <p class="font-semibold">Current Status:</p>
+                <p class="text-lg font-bold">{{ order.status }}</p>
+            </div>
+        </div>
+
+        <!-- Payment Action (Col 3) -->
+        <div class="lg:col-span-1 space-y-6">
+            <div class="payment-card p-6 rounded-xl shadow-2xl text-center">
+                <h3 class="text-2xl font-bold text-white mb-4">Select Payment Method</h3>
+                
+                <!-- Payment Method Dropdown -->
+                <select id="paymentMethodSelect" class="w-full p-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:ring-blue-500 focus:border-blue-500 transition duration-200 mb-6">
+                    <option value="none" disabled selected>Choose an option...</option>
+                    <option value="paypal">PayPal / Credit Card</option>
+                    <option value="phonepe">PhonePe / UPI</option>
+                    <option value="bank">Bank Transfer (Mock)</option>
+                </select>
+
+                <!-- Dynamic Display Area -->
+                <div id="dynamicPaymentDisplay" class="payment-instructions bg-gray-900 rounded-lg p-4">
+                    <p class="text-gray-400">Please select a payment method above to proceed.</p>
+                </div>
+            </div>
+            
+            <p class="text-center text-sm text-gray-500 mt-4 p-4 border border-gray-700 rounded-lg bg-gray-800/70">
+                {{ g.T.payment_note }}
+            </p>
+        </div>
+
+    </div>
+</section>
+
+<!-- Modal for Enlarged QR Code -->
+<div id="qrModal" class="qr-modal">
+    <span class="qr-modal-close">&times;</span>
+    <div class="qr-modal-content">
+        <h3 class="text-xl font-bold text-gray-800 mb-4">Scan QR Code to Pay</h3>
+        <img id="img01" alt="Enlarged Custom QR Code">
+        <p class="text-sm text-gray-600 mt-4">
+            Total Amount Due: **₹{{ "{:,.2f}".format(order.quote) }}**
+        </p>
+    </div>
+</div>
+
+<!-- PayPal SDK for Sandbox Transactions - Currency MUST remain USD for this demo environment -->
+<script src="https://www.paypal.com/sdk/js?client-id=sb&currency=USD"></script>
+
+<script>
+    // Get the dynamic price from the Flask context and format it as a string
+    const quoteAmount = parseFloat({{ order.quote | tojson }});
+    const orderKey = "{{ order_id }}";
+    
+    // --- PayPal Configuration ---
+    const renderPayPalButton = () => {
+        // Clear any previous PayPal buttons
+        const container = document.getElementById('paypal-button-container');
+        if (container) container.innerHTML = '';
+        
+        paypal.Buttons({
+            style: {
+                layout: 'vertical',
+                color: 'blue',
+                shape: 'rect',
+                label: 'paypal'
+            },
+            
+            // Set up the transaction
+            createOrder: function(data, actions) {
+                return actions.order.create({
+                    purchase_units: [{
+                        amount: {
+                            value: quoteAmount.toFixed(2) // Dynamic quote from Flask
+                        }
+                    }]
+                });
+            },
+
+            // Finalize the transaction
+            onApprove: function(data, actions) {
+                // For this demo, we submit the form to update the status in SQLite
+                document.getElementById('mockPaymentMethod').value = 'PayPal';
+                document.getElementById('paymentForm').submit();
+
+                // Prevent immediate redirection to see success message
+                actions.redirect(''); 
+                return new Promise(resolve => {
+                    setTimeout(() => {
+                        resolve();
+                    }, 500); // Small delay
+                });
+            },
+            
+            onError: function(err) {
+                console.error('An error occurred during PayPal transaction', err);
+                // Use a message box instead of alert()
+                const display = document.getElementById('dynamicPaymentDisplay');
+                display.innerHTML = '<div class="text-red-500 p-4 border border-red-500 rounded-lg">Payment Error: Could not complete transaction. Please try again or choose another method.</div>';
+            }
+        }).render('#paypal-button-container');
+    };
+
+    // --- Dynamic Content Functions ---
+
+    const paypalHtml = `
+        <p class="text-gray-400 mb-6">You will be securely redirected to PayPal to complete the payment of **₹${quoteAmount.toFixed(2)}**.</p>
+        <div id="paypal-button-container" class="w-2/3 mx-auto"></div>
+        <p class="text-sm text-yellow-400 font-semibold mt-4">
+            (This is a PayPal **SANDBOX** test environment. The transaction will be processed in USD.)
+        </p>
+        <form id="paymentForm" action="{{ url_for('handle_payment_route', order_id=order_id) }}" method="POST" class="hidden">
+            <input type="hidden" name="payment_method" id="mockPaymentMethod" value="PayPal">
+        </form>
+    `;
+
+    // Updated PhonePe HTML with custom image and click-to-enlarge functionality
+    const phonePeHtml = `
+        <p class="text-gray-400 mb-6">Scan this UPI QR code to complete payment of **₹${quoteAmount.toFixed(2)}**.</p>
+        <div class="qr-container">
+            <img 
+                src="{{ url_for('static', filename='img/your_custom_qr.png') }}" 
+                alt="Custom UPI QR Code" 
+                class="w-full h-auto rounded-lg mb-4 border-4 border-white cursor-pointer"
+                id="myQrImage"
+                onerror="this.onerror=null;this.src='https://placehold.co/300x300/4F46E5/FFFFFF?text=QR+Code+Error';"
+            />
+            <p class="text-sm text-yellow-400 font-semibold">
+                (Click the QR code to enlarge it for easier scanning.)
+            </p>
+        </div>
+        
+        <form id="paymentForm" action="{{ url_for('handle_payment_route', order_id=order_id) }}" method="POST" class="mt-6 space-y-4">
+            <input type="hidden" name="payment_method" value="PhonePe / UPI">
+            <button type="submit" class="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-3 rounded-lg shadow-xl transition duration-300 transform hover:scale-[1.01]">
+                {{ g.T.button_complete_pay }} (Confirm Payment)
+            </button>
+        </form>
+    `;
+
+    const bankTransferHtml = `
+        <p class="text-gray-400 mb-6">To complete your order, transfer **₹${quoteAmount.toFixed(2)}** to the account details below.</p>
+        <div class="text-left bg-gray-700 p-6 rounded-lg w-full max-w-sm mx-auto space-y-3">
+            <p><span class="font-semibold text-white">Bank Name:</span> Mock Global Bank</p>
+            <p><span class="font-semibold text-white">Account Name:</span> Upworld Devs Corp</p>
+            <p><span class="font-semibold text-white">Account Number:</span> 9876543210</p>
+            <p><span class="font-semibold text-white">IFSC/SWIFT:</span> MGBLIN5XXX</p>
+            <p class="text-yellow-300 pt-2 text-sm">Use Order ID <span class="font-mono text-white">${orderKey}</span> as reference.</p>
+        </div>
+        
+        <form id="paymentForm" action="{{ url_for('handle_payment_route', order_id=order_id) }}" method="POST" class="mt-6 space-y-4">
+            <input type="hidden" name="payment_method" value="Bank Transfer">
+            <button type="submit" class="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-3 rounded-lg shadow-xl transition duration-300 transform hover:scale-[1.01]">
+                {{ g.T.button_complete_pay }} (Payment Sent)
+            </button>
+        </form>
+    `;
+
+    // --- Main Update Function ---
+    function updatePaymentMethodDisplay() {
+        const select = document.getElementById('paymentMethodSelect');
+        const display = document.getElementById('dynamicPaymentDisplay');
+        const method = select.value;
+        
+        display.innerHTML = '';
+        
+        if (method === 'paypal') {
+            display.innerHTML = paypalHtml;
+            // Important: Render the PayPal button only after the container is in the DOM
+            if (typeof paypal !== 'undefined') {
+                 renderPayPalButton();
+            } else {
+                 // Fallback if SDK hasn't loaded yet
+                 display.innerHTML += '<p class="text-red-400 mt-4">Loading PayPal SDK...</p>';
+            }
+        } else if (method === 'phonepe') {
+            display.innerHTML = phonePeHtml;
+            // Add event listener for the QR code image after it's in the DOM
+            setTimeout(() => { // Small delay to ensure image is rendered
+                const qrImage = document.getElementById('myQrImage');
+                if (qrImage) {
+                    qrImage.onclick = function() {
+                        const modal = document.getElementById('qrModal');
+                        const modalImg = document.getElementById("img01");
+                        modal.style.display = "flex"; // Use flex for centering
+                        modalImg.src = this.src;
+                    }
+                }
+            }, 100);
+        } else if (method === 'bank') {
+            display.innerHTML = bankTransferHtml;
+        } else {
+             display.innerHTML = '<p class="text-gray-400">Please select a payment method above to proceed.</p>';
+        }
+    }
+
+    // --- Event Listeners for Modal ---
+    document.addEventListener('DOMContentLoaded', function() {
+        const select = document.getElementById('paymentMethodSelect');
+        select.addEventListener('change', updatePaymentMethodDisplay);
+        
+        // Initial setup (starts with 'none' selected)
+        updatePaymentMethodDisplay();
+
+        // Get the <span> element that closes the modal
+        const span = document.getElementsByClassName("qr-modal-close")[0];
+        const modal = document.getElementById('qrModal');
+
+        if (span) {
+            span.onclick = function() { 
+                modal.style.display = "none";
+            }
+        }
+        // Close modal when clicking outside the content area
+        modal.onclick = function(event) {
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        }
+    });
+
+    // Handle PayPal SDK loading event
+    window.onload = function() {
+        // If PayPal is the selected method on load (which it shouldn't be, but as a safety)
+        if (document.getElementById('paymentMethodSelect').value === 'paypal') {
+            updatePaymentMethodDisplay();
+        }
+    };
+</script>
+
+{% endblock %}

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Upworld Devs - Digital Solutions Agency{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #3b82f6;
+            /* Blue-500 for a modern tech feel */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d0d0d;
+            color: #e5e7eb;
+            overflow-x: hidden;
+        }
+
+        /* --- Custom Keyframes and Animations (REUSABLE BLOCK) --- */
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: fadeInUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            opacity: 0;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        .float-animation {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-8px) scale(1.02) rotateX(1deg);
+            box-shadow: 0 20px 25px -5px rgba(59, 130, 246, 0.3), 0 10px 10px -5px rgba(59, 130, 246, 0.1);
+            /* Blue glow */
+        }
+
+        .card-hover {
+            transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+        }
+
+        @keyframes pulseCTA {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+            }
+
+            50% {
+                box-shadow: 0 0 0 15px rgba(59, 130, 246, 0);
+            }
+        }
+
+        .cta-pulse {
+            animation: pulseCTA 2s infinite;
+        }
+
+        .hero-section-container {
+            perspective: 1000px;
+        }
+
+        .parallax-item {
+            will-change: transform;
+            transition: transform 0.1s linear;
+        }
+
+        /* Marquee Styles (Kept for consistency) */
+        @keyframes marquee {
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        .marquee-content {
+            display: flex;
+            width: 200%;
+            animation: marquee 30s linear infinite;
+        }
+
+        .marquee-content:hover {
+            animation-play-state: paused;
+        }
+
+        .marquee-item {
+            flex-shrink: 0;
+            white-space: nowrap;
+            padding: 0 2rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="fixed top-0 left-0 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl float-animation" style="z-index: -1;">
+    </div>
+    <div class="fixed bottom-0 right-0 w-60 h-60 bg-indigo-500/10 rounded-full blur-3xl float-animation"
+        style="animation-delay: 3s; z-index: -1;"></div>
+
+
+    <header class="sticky top-0 z-50 p-4 bg-gray-900/90 backdrop-blur-sm shadow-xl transition duration-500">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="container mx-auto max-w-7xl px-6 pt-4">
+            {% for category, message in messages %}
+            {% set alert_class = 'bg-blue-500/20 text-blue-200' if category == 'success' else 'bg-red-500/20
+            text-red-200' %}
+            {% set icon_class = 'fa-check-circle' if category == 'success' else 'fa-exclamation-triangle' %}
+
+            <div class="p-4 mb-4 rounded-lg shadow-md {{ alert_class }} flex items-center" role="alert">
+                <i class="fas {{ icon_class }} mr-3"></i>
+                <p class="font-medium">{{ message }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+        <div class="container mx-auto flex justify-between items-center max-w-7xl">
+            <a href="/"
+                class="text-2xl font-extrabold text-white hover:text-blue-400 transition transform hover:scale-105 duration-300">
+                <span class="text-blue-500">Upworld</span> Devs
+            </a>
+            <nav class="space-x-4 hidden md:flex">
+                <a href="/"
+                    class="text-gray-300 hover:text-blue-400 transition transform hover:translate-y-[-2px] duration-300">Home</a>
+                <a href="/services"
+                    class="text-gray-300 hover:text-blue-400 transition transform hover:translate-y-[-2px] duration-300">Services</a>
+                <a href="/order"
+                    class="text-gray-300 hover:text-blue-400 transition transform hover:translate-y-[-2px] duration-300 font-bold">Order</a>
+                <a href="/about"
+                    class="text-gray-300 hover:text-blue-400 transition transform hover:translate-y-[-2px] duration-300">About</a>
+                <a href="/contact"
+                    class="text-gray-300 hover:text-blue-400 transition transform hover:translate-y-[-2px] duration-300">Contact</a>
+            </nav>
+            <a href="/order"
+                class="hidden md:block cta-pulse bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2 px-6 rounded-full shadow-lg transition duration-300 transform hover:scale-105">
+                Start Project
+            </a>
+            <button class="md:hidden text-white p-2 rounded-lg hover:bg-blue-600 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="bg-gray-900 border-t border-gray-700/50 mt-10">
+        <div class="container mx-auto max-w-7xl p-6 text-center text-gray-500">
+            <p>&copy; 2025 Upworld Devs. Your World, Developed. | <a href="/payment"
+                    class="text-blue-400 hover:text-white transition">Payment Portal</a></p>
+        </div>
+    </footer>
+
+    {% block scripts %}
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- 1. Intersection Observer for Staggered Entrance Animation ---
+            const observerOptions = { root: null, rootMargin: '0px', threshold: 0.2 };
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-in');
+                        const delay = entry.target.style.getPropertyValue('--delay');
+                        if (delay) { entry.target.style.animationDelay = delay; }
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.animate-in, .feature-item, .work-item, .review-carousel-container, .team-card').forEach(element => {
+                observer.observe(element);
+            });
+
+            // --- 2. Parallax Mouse Follower Effect (Only active on the Home Page) ---
+            const heroSection = document.querySelector('.hero-section-container');
+            const parallaxItems = document.querySelectorAll('.parallax-item');
+
+            if (heroSection && parallaxItems.length > 0) {
+                let isMoving = false;
+                const handleMouseMove = (e) => {
+                    if (isMoving) return;
+                    isMoving = true;
+
+                    requestAnimationFrame(() => {
+                        const rect = heroSection.getBoundingClientRect();
+                        const normalizeX = (e.clientX - (rect.left + rect.width / 2)) / (rect.width * 2);
+                        const normalizeY = (e.clientY - (rect.top + rect.height / 2)) / (rect.height * 2);
+
+                        parallaxItems.forEach(item => {
+                            const depth = parseFloat(item.getAttribute('data-depth')) || 10;
+                            const moveX = normalizeX * depth * -1;
+                            const moveY = normalizeY * depth * -1;
+                            item.style.transform = `translate3d(${moveX}px, ${moveY}px, 0)`;
+                        });
+                        isMoving = false;
+                    });
+                };
+                heroSection.addEventListener('mousemove', handleMouseMove);
+                heroSection.addEventListener('mouseleave', () => {
+                    parallaxItems.forEach(item => { item.style.transform = `translate3d(0, 0, 0)`; });
+                });
+            }
+        });
+    </script>
+    {% endblock %}
+</body>
+
+</html>

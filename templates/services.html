@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}{{ g.T['services'] }}{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+    <div class="text-center mb-16 animate-in">
+        <h1 class="text-4xl font-extrabold text-white mb-3">{{ g.T['services'] }} We Offer</h1>
+        <p class="text-xl text-gray-400 max-w-3xl mx-auto">
+            We specialize in modern, scalable solutions that drive tangible results for your business.
+        </p>
+        
+    </div>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+        
+        <div class="bg-gray-800/70 p-8 rounded-2xl shadow-xl border border-blue-500/20 transform hover:scale-[1.02] transition duration-300">
+            <i class="fas fa-globe text-4xl text-blue-400 mb-4"></i>
+            <h2 class="text-2xl font-bold text-white mb-3">Custom Web Apps</h2>
+            <p class="text-gray-400">
+                From high-traffic e-commerce to complex internal tools, we engineer bespoke web applications using Python/Flask and modern JS frameworks.
+            </p>
+            <a href="{{ url_for('order_briefing') }}" class="mt-4 inline-block text-blue-400 hover:text-blue-300 font-semibold transition">Start a Web Project &rarr;</a>
+        </div>
+
+        <div class="bg-gray-800/70 p-8 rounded-2xl shadow-xl border border-blue-500/20 transform hover:scale-[1.02] transition duration-300">
+            <i class="fas fa-code-branch text-4xl text-green-400 mb-4"></i>
+            <h2 class="text-2xl font-bold text-white mb-3">Bespoke Software</h2>
+            <p class="text-gray-400">
+                Automate your workflows, analyze complex data, or build internal enterprise software tailored exactly to your business logic and needs.
+            </p>
+            <a href="{{ url_for('order_briefing') }}" class="mt-4 inline-block text-green-400 hover:text-green-300 font-semibold transition">Explore Software &rarr;</a>
+        </div>
+
+        <div class="bg-gray-800/70 p-8 rounded-2xl shadow-xl border border-blue-500/20 transform hover:scale-[1.02] transition duration-300">
+            <i class="fas fa-server text-4xl text-yellow-400 mb-4"></i>
+            <h2 class="text-2xl font-bold text-white mb-3">IT/Cloud Solutions</h2>
+            <p class="text-gray-400">
+                Secure hosting, reliable cloud infrastructure setup (AWS/Azure), and ongoing maintenance to keep your applications running perfectly.
+            </p>
+            <a href="{{ url_for('contact') }}" class="mt-4 inline-block text-yellow-400 hover:text-yellow-300 font-semibold transition">Request IT Support &rarr;</a>
+        </div>
+        
+        </div>
+
+    <div class="mt-20 text-center bg-blue-600/10 p-10 rounded-xl border border-blue-600/30">
+        <h3 class="text-3xl font-bold text-white mb-4">Ready to Innovate?</h3>
+        <p class="text-gray-300 mb-6 max-w-2xl mx-auto">
+            Every great project starts with a conversation. Tell us your vision, and we’ll provide the roadmap.
+        </p>
+        <a href="{{ url_for('order_briefing') }}" class="cta-pulse bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-8 rounded-full shadow-lg transition duration-300">
+            Start Your Free Consultation
+        </a>
+    </div>
+
+</div>
+{% endblock %}

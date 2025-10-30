@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Order & Briefing Form - Upworld Devs{% endblock %}
+
+{% block content %}
+<section class="container mx-auto max-w-3xl px-6 py-24">
+    <div class="text-center mb-12 animate-in">
+        <h1 class="text-4xl font-extrabold text-white mb-3">Start Your Project Journey</h1>
+        <p class="text-lg text-gray-400">Tell us about your digital needs. The more detail, the better our quote!</p>
+    </div>
+
+    <!-- FLASH MESSAGES -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="mb-6 space-y-2">
+            {% for category, message in messages %}
+                <div class="flash-message p-3 rounded-lg text-sm {% if category == 'success' %}bg-green-600 text-white{% elif category == 'danger' %}bg-red-600 text-white{% else %}bg-blue-600 text-white{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    <!-- ACTION CORRECTED: Points to the Flask route 'order_briefing' which handles saving and redirecting -->
+    <form action="{{ url_for('order_briefing') }}" method="POST" class="bg-gray-800/70 p-8 md:p-12 rounded-2xl shadow-2xl animate-in" style="--delay: 0.2s;">
+        
+        <h2 class="text-2xl font-bold text-blue-400 mb-6 border-b border-gray-700 pb-2">Client Contact Information</h2>
+        <div class="space-y-6">
+            
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-300 mb-2">Your Contact Email *</label>
+                <input type="email" id="email" name="email" required placeholder="name@company.com" 
+                        class="w-full p-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:ring-blue-500 focus:border-blue-500">
+            </div>
+
+            <h2 class="text-2xl font-bold text-blue-400 mb-6 border-b border-gray-700 pb-2 pt-6">Project Scope & Details</h2>
+
+            <div>
+                <label for="project_type" class="block text-sm font-medium text-gray-300 mb-2">1. Project Type *</label>
+                <select id="project_type" name="project_type" required class="w-full p-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:ring-blue-500 focus:border-blue-500 transition duration-200">
+                    <!-- Cleaned up: Added value="" to the disabled option -->
+                    <option value="" disabled selected>Select a primary service...</option> 
+                    <option value="website">Custom Website / Web App</option>
+                    <option value="software">Bespoke Software / Tool</option>
+                    <option value="it_solution">IT / Computer Solution</option>
+                    <option value="consultation">General Consultation</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="budget" class="block text-sm font-medium text-gray-300 mb-2">2. Estimated Budget Range (USD)</label>
+                <input type="text" id="budget" name="budget" placeholder="e.g., $5,000 - $10,000" class="w-full p-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:ring-blue-500 focus:border-blue-500">
+            </div>
+
+            <div>
+                <label for="timeline" class="block text-sm font-medium text-gray-300 mb-2">3. Preferred Timeline</label>
+                <input type="text" id="timeline" name="timeline" placeholder="e.g., 6-8 weeks, Urgent" class="w-full p-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:ring-blue-500 focus:border-blue-500">
+            </div>
+
+            <div>
+                <label for="description" class="block text-sm font-medium text-gray-300 mb-2">4. Detailed Project Description *</label>
+                <textarea id="description" name="description" rows="6" required placeholder="Describe your business, your goals, and what you need us to build." class="w-full p-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:ring-blue-500 focus:border-blue-500"></textarea>
+            </div>
+
+            <div class="pt-4">
+                <button type="submit" class="w-full cta-pulse bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-full shadow-lg transition duration-300 transform hover:scale-[1.01]">
+                    Submit Brief & Get a Free Quote
+                </button>
+            </div>
+        </div>
+    </form>
+</section>
+{% endblock %}
